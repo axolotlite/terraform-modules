@@ -7,3 +7,8 @@ output "wg_peer" {
     persistentKeepaliveInterval = var.wg_keep_alive
   } : null
 }
+
+output "urls" {
+  description = "The image urls for manually updating nodes"
+  value = data.talos_image_factory_urls.this.urls
+}
