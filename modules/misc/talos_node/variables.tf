@@ -140,3 +140,9 @@ variable "wg_override_endpoint" {
   default = null
   nullable = true
 }
+
+variable "apply_talos_config" {
+  description = "wether to apply the auto generated config or not, this is mainly for debugging"
+  type = bool
+  default = true
+}

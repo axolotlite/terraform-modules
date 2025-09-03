@@ -87,6 +87,7 @@ data "talos_machine_configuration" "this" {
 }
 
 resource "talos_machine_configuration_apply" "this" {
+  count = var.apply_talos_config ? 1 : 0
   client_configuration        = var.client_configuration
   machine_configuration_input = data.talos_machine_configuration.this.machine_configuration
   node                            = var.node_address
