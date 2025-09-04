@@ -27,6 +27,16 @@ locals {
       nodeLabels = var.node_labels
     }
   })
+  node_annotations = yamlencode({
+    machine = {
+      nodeLabels = var.node_annotations
+    }
+  })
+  node_taints = yamlencode({
+    machine = {
+      nodeLabels = var.node_taints
+    }
+  })
   wg_interface_config = yamlencode({
     machine = {
       network = {

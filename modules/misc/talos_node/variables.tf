@@ -83,6 +83,16 @@ variable "node_labels" {
   type        = map(string)
   default     = {}
 }
+variable "node_annotations" {
+  description = "The annotations added to the node"
+  type        = map(string)
+  default     = {}
+}
+variable "node_taints" {
+  description = "The taints added to the node"
+  type        = map(string)
+  default     = {}
+}
 variable "use_wireguard" {
   description = "Wether to use wireguard as the underlying network or not"
   type        = bool

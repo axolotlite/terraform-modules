@@ -36,6 +36,7 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| <a name="input_apply_talos_config"></a> [apply\_talos\_config](#input\_apply\_talos\_config) | wether to apply the auto generated config or not, this is mainly for debugging | `bool` | `true` | no |
 | <a name="input_client_configuration"></a> [client\_configuration](#input\_client\_configuration) | The secret used to authenticate to a Talos node | `any` | n/a | yes |
 | <a name="input_cluster_endpoint"></a> [cluster\_endpoint](#input\_cluster\_endpoint) | The cluster endpoint for the node to join | `string` | `null` | no |
 | <a name="input_cluster_name"></a> [cluster\_name](#input\_cluster\_name) | The name of the cluster that the node will join | `string` | n/a | yes |
@@ -46,7 +47,10 @@ No modules.
 | <a name="input_kubernetes_version"></a> [kubernetes\_version](#input\_kubernetes\_version) | The version of kubernetes for talos to use | `string` | `"v1.33.0"` | no |
 | <a name="input_machine_secrets"></a> [machine\_secrets](#input\_machine\_secrets) | The secret used to connect Talos nodes together | `any` | n/a | yes |
 | <a name="input_node_address"></a> [node\_address](#input\_node\_address) | The network reachable address of the Talos node to configure | `string` | n/a | yes |
+| <a name="input_node_annotations"></a> [node\_annotations](#input\_node\_annotations) | The annotations added to the node | `map(string)` | `{}` | no |
 | <a name="input_node_is_controlplane"></a> [node\_is\_controlplane](#input\_node\_is\_controlplane) | Wether to configure this node as a controlplane or a worker node | `bool` | `false` | no |
+| <a name="input_node_labels"></a> [node\_labels](#input\_node\_labels) | The labels added to the node | `map(string)` | `{}` | no |
+| <a name="input_node_taints"></a> [node\_taints](#input\_node\_taints) | The taints added to the node | `map(string)` | `{}` | no |
 | <a name="input_talos_extensions"></a> [talos\_extensions](#input\_talos\_extensions) | The extensions to use in creating the factory.talos.dev installer image | `list(string)` | `[]` | no |
 | <a name="input_talos_extra_kernel_args"></a> [talos\_extra\_kernel\_args](#input\_talos\_extra\_kernel\_args) | Extra kernels arguments to give to the node | `list(string)` | `[]` | no |
 | <a name="input_talos_version"></a> [talos\_version](#input\_talos\_version) | The version used to create the talos image | `string` | n/a | yes |
@@ -57,11 +61,11 @@ No modules.
 | <a name="input_wg_keep_alive"></a> [wg\_keep\_alive](#input\_wg\_keep\_alive) | How long is the wg connection kept alive | `string` | `"5s"` | no |
 | <a name="input_wg_listen_port"></a> [wg\_listen\_port](#input\_wg\_listen\_port) | This node's listening port for wireguard | `number` | `null` | no |
 | <a name="input_wg_override_endpoint"></a> [wg\_override\_endpoint](#input\_wg\_override\_endpoint) | In case of tunneling, you should specify the endpoint of the tunnel | `string` | `null` | no |
-| <a name="input_wg_peers"></a> [wg\_peers](#input\_wg\_peers) | Other Talos nodes connected to this one through wireguard | <pre>list(object({<br/>    publicKey = string<br/>    endpoint = string<br/>    allowedIPs = list(string)<br/>    persistentKeepaliveInterval = optional(string,"5s")<br/>  }))</pre> | `[]` | no |
+| <a name="input_wg_peers"></a> [wg\_peers](#input\_wg\_peers) | Other Talos nodes connected to this one through wireguard | <pre>list(object({<br/>    publicKey                   = string<br/>    endpoint                    = string<br/>    allowedIPs                  = list(string)<br/>    persistentKeepaliveInterval = optional(string, "5s")<br/>  }))</pre> | `[]` | no |
 
 ## Outputs
 
 | Name | Description |
 |------|-------------|
+| <a name="output_urls"></a> [urls](#output\_urls) | The image urls for manually updating nodes |
 | <a name="output_wg_peer"></a> [wg\_peer](#output\_wg\_peer) | This nodes wireguard peer information to connect to other nodes |
-
