@@ -2,7 +2,7 @@
 locals {
   #Machine role
   machine_type = var.node_is_controlplane ? "controlplane" : "worker"
-  
+
   #Schematic config section
   schematic = yamlencode(
     {
@@ -17,36 +17,42 @@ locals {
   #machine config section
   install_image = yamlencode({
     machine = {
-        install = {
-            image = var.is_image_secureboot ? data.talos_image_factory_urls.this.urls.installer_secureboot : data.talos_image_factory_urls.this.urls.installer
-        }
+      install = {
+        image = var.is_image_secureboot ? data.talos_image_factory_urls.this.urls.installer_secureboot : data.talos_image_factory_urls.this.urls.installer
+      }
+    }
+  })
+  node_labels = yamlencode({
+    machine = {
+      nodeLabels = var.node_labels
     }
   })
   wg_interface_config = yamlencode({
     machine = {
       network = {
-          interfaces = [
-              {
-                  interface = var.wg_iface_name
-                  addresses = var.wg_addresses
-                  wireguard = {
-                      privateKey = wireguard_asymmetric_key.this.private_key
-                      listenPort = var.wg_listen_port
-                      peers = var.wg_peers
-                  }
-              }
-          ]
+        interfaces = [
+          {
+            interface = var.wg_iface_name
+            addresses = var.wg_addresses
+            wireguard = {
+              privateKey = wireguard_asymmetric_key.this.private_key
+              listenPort = var.wg_listen_port
+              peers      = var.wg_peers
+            }
+          }
+        ]
       }
     }
   })
   config_templates = [
-      for template,paramater in var.config_templates :
-        templatefile(template,paramater)
-    ]
+    for template, paramater in var.config_templates :
+    templatefile(template, paramater)
+  ]
   config_patches = concat(
     [
-        local.install_image,
-        local.wg_interface_config
+      local.install_image,
+      local.wg_interface_config,
+      local.node_labels
     ],
     local.config_templates
   )
@@ -71,24 +77,24 @@ resource "talos_image_factory_schematic" "this" {
 data "talos_image_factory_urls" "this" {
   talos_version = var.talos_version
   schematic_id  = talos_image_factory_schematic.this.id
-  architecture = var.image_arch
+  architecture  = var.image_arch
   platform      = var.image_platform
 }
 
 # -- Node Configuration --
 data "talos_machine_configuration" "this" {
-  talos_version = var.talos_version
-  cluster_name     = var.cluster_name
-  machine_type     = local.machine_type
-  cluster_endpoint = var.cluster_endpoint
-  machine_secrets  = var.machine_secrets
+  talos_version      = var.talos_version
+  cluster_name       = var.cluster_name
+  machine_type       = local.machine_type
+  cluster_endpoint   = var.cluster_endpoint
+  machine_secrets    = var.machine_secrets
   kubernetes_version = var.kubernetes_version
-  config_patches = local.config_patches
+  config_patches     = local.config_patches
 }
 
 resource "talos_machine_configuration_apply" "this" {
-  count = var.apply_talos_config ? 1 : 0
+  count                       = var.apply_talos_config ? 1 : 0
   client_configuration        = var.client_configuration
   machine_configuration_input = data.talos_machine_configuration.this.machine_configuration
-  node                            = var.node_address
+  node                        = var.node_address
 }
