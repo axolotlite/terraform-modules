@@ -62,7 +62,9 @@ locals {
     [
       local.install_image,
       local.wg_interface_config,
-      local.node_labels
+      local.node_labels,
+      local.node_annotations,
+      local.node_taints
     ],
     local.config_templates
   )
