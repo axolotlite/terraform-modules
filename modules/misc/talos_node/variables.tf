@@ -74,7 +74,7 @@ variable "node_address" {
 
 variable "config_templates" {
   description = "The map locations of the template and the parameters for it"
-  type        = map(map(string))
+  # type        = map(map({}))
   default     = {}
 }
 
