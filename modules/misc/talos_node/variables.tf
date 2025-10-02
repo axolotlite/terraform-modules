@@ -55,6 +55,12 @@ variable "talos_extra_kernel_args" {
   default     = []
 }
 
+variable "talos_kernel_modules" {
+  description = "Kernel Modules to laod into the node"
+  type        = list(string)
+  default     = []
+}
+
 variable "cluster_name" {
   description = "The name of the cluster that the node will join"
   type        = string

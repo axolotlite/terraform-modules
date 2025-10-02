@@ -22,6 +22,13 @@ locals {
       }
     }
   })
+  kernel_modules = yamlencode({
+    machine = {
+      kernel = {
+        modules = var.talos_kernel_modules
+      }
+    }
+  })
   node_labels = yamlencode({
     machine = {
       nodeLabels = var.node_labels
@@ -61,6 +68,7 @@ locals {
   config_patches = concat(
     [
       local.install_image,
+      kernel_modules,
       local.wg_interface_config,
       local.node_labels,
       local.node_annotations,
