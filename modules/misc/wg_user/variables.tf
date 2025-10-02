@@ -1,6 +1,7 @@
-variable "node_address" {
-  description = "The network reachable address of the Talos node to configure"
-  type        = string
+variable "file_path" {
+  description = "The directory to write the wireguard config file to"
+  type = string
+  default = "."
 }
 variable "wg_iface_name" {
   description = "The name of the wireguard interface on the Talos machine config"
@@ -41,11 +42,4 @@ variable "wg_allowed_ips" {
   description = "Allowed ip addresses this node can access(careful that it doesn't overlap with other networks, disabling network access)"
   type        = list(string)
   default     = []
-}
-
-variable "wg_override_endpoint" {
-  description = "In case of tunneling, you should specify the endpoint of the tunnel"
-  type        = string
-  default     = null
-  nullable    = true
 }
