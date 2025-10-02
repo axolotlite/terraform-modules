@@ -25,10 +25,11 @@ locals {
   kernel_modules = yamlencode({
     machine = {
       kernel = {
-        modules = {
-          for module in var.talos_kernel_modules 
-            : module => { name = module }
-        }
+        modules = [
+          for module in var.talos_kernel_modules : {
+            name = module
+          }
+        ]
       }
     }
   })
