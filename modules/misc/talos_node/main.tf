@@ -68,7 +68,7 @@ locals {
   config_patches = concat(
     [
       local.install_image,
-      kernel_modules,
+      local.kernel_modules,
       local.wg_interface_config,
       local.node_labels,
       local.node_annotations,
