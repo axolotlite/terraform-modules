@@ -43,3 +43,8 @@ variable "wg_allowed_ips" {
   type        = list(string)
   default     = []
 }
+variable "wg_mtu" {
+  description = "The mtu used by the device"
+  type = string
+  default = "1500"
+}

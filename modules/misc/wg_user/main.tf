@@ -10,7 +10,7 @@ PrivateKey = ${wireguard_asymmetric_key.this.private_key}
 %{ for address in var.wg_addresses ~}
 Address = ${address}
 %{ endfor ~}
-MTU = 1500
+MTU = ${var.wg_mtu}
 %{ for peer in var.wg_peers ~}
 [Peer]
 PublicKey = ${peer.publicKey}
