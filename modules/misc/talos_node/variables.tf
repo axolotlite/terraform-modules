@@ -163,8 +163,8 @@ variable "wg_override_endpoint" {
 }
 variable "wg_mtu" {
   description = "The mtu of the wireguard packets"
-  type = string
-  default = "1500"
+  type = number
+  default = 1500
 }
 variable "apply_talos_config" {
   description = "wether to apply the auto generated config or not, this is mainly for debugging"

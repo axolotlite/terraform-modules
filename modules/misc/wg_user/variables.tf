@@ -45,6 +45,6 @@ variable "wg_allowed_ips" {
 }
 variable "wg_mtu" {
   description = "The mtu used by the device"
-  type = string
-  default = "1500"
+  type = number
+  default = 1500
 }
