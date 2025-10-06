@@ -54,6 +54,7 @@ locals {
         interfaces = [
           {
             interface = var.wg_iface_name
+            mtu = var.wg_mtu
             addresses = var.wg_addresses
             wireguard = {
               privateKey = wireguard_asymmetric_key.this.private_key
