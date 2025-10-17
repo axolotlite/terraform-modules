@@ -57,7 +57,7 @@ locals {
             mtu = var.wg_mtu
             addresses = var.wg_addresses
             wireguard = {
-              privateKey = wireguard_asymmetric_key.this.private_key
+              privateKey = try(wireguard_asymmetric_key.this.private_key, null)
               listenPort = var.wg_listen_port
               peers      = var.wg_peers
             }
@@ -65,7 +65,7 @@ locals {
         ]
       }
     }
-  }) : ""
+  }) : null
   config_templates = [
     for template, paramater in var.config_templates :
     templatefile(template, paramater)
