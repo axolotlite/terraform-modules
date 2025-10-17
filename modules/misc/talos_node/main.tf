@@ -57,7 +57,7 @@ locals {
             mtu = var.wg_mtu
             addresses = var.wg_addresses
             wireguard = {
-              privateKey = try(wireguard_asymmetric_key.this.private_key, null)
+              privateKey = try(wireguard_asymmetric_key[0].this.private_key, null)
               listenPort = var.wg_listen_port
               peers      = var.wg_peers
             }
