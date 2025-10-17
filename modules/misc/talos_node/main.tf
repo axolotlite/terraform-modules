@@ -48,7 +48,7 @@ locals {
       nodeTaints = var.node_taints
     }
   })
-  wg_interface_config = yamlencode({
+  wg_interface_config = var.use_wireguard ? yamlencode({
     machine = {
       network = {
         interfaces = [
@@ -65,7 +65,7 @@ locals {
         ]
       }
     }
-  })
+  }) : ""
   config_templates = [
     for template, paramater in var.config_templates :
     templatefile(template, paramater)
@@ -85,6 +85,7 @@ locals {
 
 # -- Wireguard --
 resource "wireguard_asymmetric_key" "this" {
+  count = var.use_wireguard ? 1 : 0
 }
 
 # -- Extensions --
