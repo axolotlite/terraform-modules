@@ -75,8 +75,7 @@ variable "cluster_endpoint" {
 variable "cluster_inline_manifests" {
   description = "The paths to manifest files to load onto Talos after cluster creation"
   type = map(string)
-  default = null
-  nullable = true
+  default = {}
 }
 variable "cluster_extra_manifests" {
   description = "An array of raw text urls containing extra manifests to download and load after cluster creation"
