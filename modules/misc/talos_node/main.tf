@@ -66,6 +66,22 @@ locals {
       }
     }
   }) : null
+  cluster_inline_manifests = yamlencode({
+    cluster = {
+      inlineManifests = [
+        for name, manifest in var.cluster_inline_manifests :
+          {
+            name = name
+            contents = file(manifest)
+          }
+      ]
+    }
+  })
+  cluster_extra_manifests = yamlencode({
+    cluster = {
+      extraManifests = var.cluster_extra_manifests
+    }
+  })
   config_templates = [
     for template, paramater in var.config_templates :
     templatefile(template, paramater)
@@ -77,7 +93,9 @@ locals {
       local.wg_interface_config,
       local.node_labels,
       local.node_annotations,
-      local.node_taints
+      local.node_taints,
+      local.cluster_inline_manifests,
+      local.cluster_extra_manifests
     ],
     local.config_templates
   )

@@ -17,6 +17,9 @@ module "home_controlplane" {
   node_address         = var.home_controlplane_address
   client_configuration = talos_machine_secrets.this.client_configuration
   node_is_controlplane = true
+  cluster_inline_manifests = {
+    "nginx" = "manifests/nginx.yaml"
+  }
   cluster_name         = var.cluster_name
   is_image_secureboot  = var.is_image_secureboot
   talos_extensions     = ["intel-ucode"]
