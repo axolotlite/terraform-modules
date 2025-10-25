@@ -94,6 +94,19 @@ install_wstunnel() {
     exit 3
   fi
 }
+run_nmcli() {
+  if nmcli "$@"; then
+    return 0
+  else
+    echo "[!] Permission denied for nmcli, retrying with sudo..."
+    if sudo -n true 2>/dev/null; then
+      sudo nmcli "$@"
+    else
+      echo "[!] sudo password required for network command..."
+      sudo nmcli "$@"
+    fi
+  fi
+}
 
 profile_paths() {
   PROFILE_DIR="$APP_HOME/$PROFILE_NAME"
@@ -228,7 +241,7 @@ start_service() {
   # Import WireGuard
   log "[+] Importing WireGuard config ..."
   # Capture nmcli output to extract imported connection name
-  IMPORT_OUT=$(nmcli connection import type wireguard file "$WGC_FILE" 2>&1) || {
+  IMPORT_OUT=$(run_nmcli connection import type wireguard file "$WGC_FILE" 2>&1) || {
     err "nmcli import failed: $IMPORT_OUT"
     return 8
   }
@@ -236,7 +249,7 @@ start_service() {
   IMPORT_NAME=$(printf '%s' "$IMPORT_OUT" | sed -n "s/Connection '\([^']*\)'.*/\1/p" | head -n1 || true)
   if [[ -z "$IMPORT_NAME" ]]; then
     # fallback: try to find most-recent wireguard connection created
-    IMPORT_NAME=$(nmcli -t -f NAME,TYPE connection show | awk -F: '$2=="wireguard"{print $1}' | tail -n1 || true)
+    IMPORT_NAME=$(run_nmcli -t -f NAME,TYPE connection show | awk -F: '$2=="wireguard"{print $1}' | tail -n1 || true)
   fi
 
   if [[ -z "$IMPORT_NAME" ]]; then
@@ -247,14 +260,14 @@ start_service() {
 
   NEW_NAME="wgc-${PROFILE_NAME}"
   log "[+] Renaming imported connection '$IMPORT_NAME' -> '$NEW_NAME'"
-  nmcli connection modify "$IMPORT_NAME" connection.id "$NEW_NAME" || {
+  run_nmcli connection modify "$IMPORT_NAME" connection.id "$NEW_NAME" || {
     err "Failed to rename connection '$IMPORT_NAME' to '$NEW_NAME'."
     return 10
   }
 
   # Bring it up
   log "[+] Bringing up WireGuard connection '$NEW_NAME' ..."
-  nmcli connection up "$NEW_NAME" || {
+  run_nmcli connection up "$NEW_NAME" || {
     err "Failed to bring up connection '$NEW_NAME'."
     return 11
   }
@@ -286,7 +299,7 @@ stop_service() {
 
   # bring down and delete wireguard connection
   WG_NAME="wgc-${PROFILE_NAME}"
-  if nmcli -t -f NAME connection show | grep -Fxq "$WG_NAME"; then
+  if run_nmcli -t -f NAME connection show | grep -Fxq "$WG_NAME"; then
     log "[+] Bringing down WireGuard connection '$WG_NAME' ..."
     nmcli connection down "$WG_NAME" || true
     log "[+] Deleting WireGuard connection '$WG_NAME' ..."
