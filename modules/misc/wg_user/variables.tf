@@ -1,7 +1,7 @@
-variable "file_path" {
-  description = "The directory to write the wireguard config file to"
+variable "filename" {
+  description = "The path and filename to write the wireguard config file to"
   type = string
-  default = "."
+  default = "./wireguard.conf"
 }
 variable "wg_iface_name" {
   description = "The name of the wireguard interface on the Talos machine config"

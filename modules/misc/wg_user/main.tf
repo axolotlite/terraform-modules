@@ -2,7 +2,7 @@ resource "wireguard_asymmetric_key" "this" {
 }
 
 resource "local_file" "peer_config" {
-    filename = "${var.file_path}/${var.wg_iface_name}.conf"
+    filename = "${var.filename}"
     file_permission = "600"
     content = <<EOT
 [Interface]
