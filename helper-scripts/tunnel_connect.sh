@@ -4,6 +4,7 @@ set -euo pipefail
 # === Defaults / Constants ===
 DEFAULT_VERSION="v10.2.0"
 OS_TYPE="$(uname | tr '[:upper:]' '[:lower:]')"
+INSTALL_ARCH="amd64"
 BIN_DIR="$HOME/.local/bin"
 APP_HOME="$HOME/.local/share/wstunnel"
 PROFILE_NAME="default"
@@ -17,12 +18,13 @@ log() { printf '%s\n' "$*"; }
 err() { printf 'ERROR: %s\n' "$*" >&2; }
 usage() {
   cat <<EOF
-Usage: $0 [--install [--version <ver>] [--os <linux|darwin>]] [--profile <name> [--secret <s> --endpoint <url> --wg-file <file>]] {start|stop}
+Usage: $0 [--install [--version <ver>] [--os <linux|darwin>] [--arch <amd64|arm64>]] [--profile <name> [--secret <s> --endpoint <url> --wg-file <file>]] {start|stop}
 
 Options/Commands:
   --install                     Install wstunnel binary (downloads to /tmp and extracts to $BIN_DIR)
     --version <ver>             Which release tag to download (default: $DEFAULT_VERSION)
     --os <linux|darwin>         OS token used in downloaded filename (default: auto-detected: $OS_TYPE)
+    --arch <amd64|arm64>        CPU architecture (default: amd64)
 
   --profile <name>              Select or create profile (default name is "default")
     --secret <string>           Set WSTUNNEL_SECRET for the profile (hidden input in interactive mode)
@@ -41,7 +43,7 @@ Behavior:
 
 Examples:
   $0 --install
-  $0 --install --version v10.2.0 --os linux
+  $0 --install --version v10.2.0 --os linux --arch arm64
   $0 --profile myvpn                      # interactive setup for profile "myvpn"
   $0 --profile myvpn --secret abc --endpoint ws://x:8080 --wg-file ./wg.conf
   $0 --profile myvpn start
@@ -74,8 +76,8 @@ install_wstunnel() {
 
   ensure_dirs
 
-  local tmpfile="/tmp/wstunnel_${version}_${os_token}_amd64.tar.gz"
-  local url="https://github.com/erebe/wstunnel/releases/download/${version}/wstunnel_${version:1}_${os_token}_amd64.tar.gz"
+  local tmpfile="/tmp/wstunnel_${version}_${os_token}_${INSTALL_ARCH}.tar.gz"
+  local url="https://github.com/erebe/wstunnel/releases/download/${version}/wstunnel_${version:1}_${os_token}_${INSTALL_ARCH}.tar.gz"
 
   log "[+] Downloading $url to $tmpfile ..."
   if ! curl -fSL -o "$tmpfile" "$url"; then
@@ -301,9 +303,9 @@ stop_service() {
   WG_NAME="wgc-${PROFILE_NAME}"
   if run_nmcli -t -f NAME connection show | grep -Fxq "$WG_NAME"; then
     log "[+] Bringing down WireGuard connection '$WG_NAME' ..."
-    nmcli connection down "$WG_NAME" || true
+    run_nmcli connection down "$WG_NAME" || true
     log "[+] Deleting WireGuard connection '$WG_NAME' ..."
-    nmcli connection delete "$WG_NAME" || true
+    run_nmcli connection delete "$WG_NAME" || true
     log "[+] WireGuard connection removed."
   else
     log "[!] WireGuard connection '$WG_NAME' not found. Skipping removal."
@@ -335,6 +337,7 @@ while [[ $# -gt 0 ]]; do
     --install) INSTALL_FLAG=1; shift ;;
     --version) INSTALL_VERSION="${2:-}"; shift 2 ;;
     --os) INSTALL_OS="${2:-}"; shift 2 ;;
+    --arch) INSTALL_ARCH="${2:-}"; shift 2 ;;
     --profile) ARG_PROFILE="${2:-}"; shift 2 ;;
     --secret) ARG_SECRET="${2:-}"; shift 2 ;;
     --endpoint) ARG_ENDPOINT="${2:-}"; shift 2 ;;
