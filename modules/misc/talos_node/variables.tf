@@ -56,9 +56,15 @@ variable "talos_extra_kernel_args" {
 }
 
 variable "talos_kernel_modules" {
-  description = "Kernel Modules to laod into the node"
+  description = "Kernel Modules to load into the node"
   type        = list(string)
   default     = []
+}
+
+variable "talos_machine_sysctls" {
+  description = "Sysctls to set into the node"
+  type        = map(string)
+  default     = {}
 }
 
 variable "cluster_name" {
