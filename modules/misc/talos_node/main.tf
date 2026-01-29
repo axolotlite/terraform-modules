@@ -33,6 +33,11 @@ locals {
       }
     }
   })
+  machine_sysctls = yamlencode({
+    machine = {
+      sysctls = var.talos_machine_sysctls
+    }
+  })
   node_labels = yamlencode({
     machine = {
       nodeLabels = var.node_labels
@@ -90,6 +95,7 @@ locals {
     [
       local.install_image,
       local.kernel_modules,
+      local.machine_sysctls,
       local.wg_interface_config,
       local.node_labels,
       local.node_annotations,
