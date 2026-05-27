@@ -119,10 +119,10 @@ variable "use_wireguard" {
   type        = bool
   default     = false
 }
-variable "use_wireguard_preshared_key" {
-  description = "Whether to use a presharedKey for wireguard (Highly Recommended)"
-  type        = bool
-  default     = true
+variable "wg_preshared_key" {
+  description = "The presharedKey for wireguard communication (Highly Recommended)"
+  type        = string
+  default     = null
 }
 variable "wg_iface_name" {
   description = "Name of the Wireguard link (interface)"

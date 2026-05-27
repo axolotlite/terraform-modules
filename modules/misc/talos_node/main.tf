@@ -93,12 +93,15 @@ locals {
       local.install_image,
       local.kernel_modules,
       local.machine_sysctls,
-      local.wg_interface_config,
       local.node_labels,
       local.node_annotations,
       local.node_taints,
       local.cluster_inline_manifests,
       local.cluster_extra_manifests
+    ],
+    # Extra Config Documents
+    [
+      local.wg_interface_config
     ],
     local.config_templates
   )
@@ -107,9 +110,6 @@ locals {
 # -- Wireguard --
 resource "wireguard_asymmetric_key" "this" {
   count = var.use_wireguard ? 1 : 0
-}
-resource "wireguard_preshared_key" "this" {
-  count = var.use_wireguard && var.use_wireguard_preshared_key ? 1 : 0
 }
 # -- Extensions --
 data "talos_image_factory_extensions_versions" "this" {

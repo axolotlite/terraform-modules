@@ -1,11 +1,6 @@
 resource "wireguard_asymmetric_key" "this" {
 }
 
-resource "wireguard_preshared_key" "this" {
-}
-
-
-
 resource "local_file" "peer_config" {
     filename = "${var.filename}"
     file_permission = "600"
@@ -19,7 +14,7 @@ MTU = ${var.wg_mtu}
 %{ for peer in var.wg_peers ~}
 [Peer]
 PublicKey = ${peer.publicKey}
-PresharedKey = ${peer.presharedKey}
+${var.wg_preshared_key != null || peer.presharedKey != null ? "PresharedKey = ${coalesce(var.wg_preshared_key, peer.presharedKey)}" : ""}
 AllowedIPs = ${join(",", peer.allowedIPs)}
 Endpoint = ${peer.endpoint}
 PersistentKeepalive = ${replace(peer.persistentKeepaliveInterval, "s", "")}
