@@ -53,24 +53,21 @@ locals {
       nodeTaints = var.node_taints
     }
   })
+  
+  # Source: https://docs.siderolabs.com/talos/v1.13/reference/configuration/network/wireguardconfig#wireguardconfig
   wg_interface_config = var.use_wireguard ? yamlencode({
-    machine = {
-      network = {
-        interfaces = [
-          {
-            interface = var.wg_iface_name
-            mtu = var.wg_mtu
-            addresses = var.wg_addresses
-            wireguard = {
-              privateKey = try(wireguard_asymmetric_key.this[0].private_key, null)
-              listenPort = var.wg_listen_port
-              peers      = var.wg_peers
-            }
-          }
-        ]
-      }
-    }
+    apiVersion = "v1alpha1"
+    kind = "WireguardConfig"
+    name = var.wg_iface_name
+    privateKey = try(wireguard_asymmetric_key.this[0].private_key, null)
+    listenPort = var.wg_listen_port
+    firewallMark = var.wg_firewall_mark
+    peers      = var.wg_peers
+    mtu = var.wg_mtu
+    addresses = var.wg_addresses
+    routes = var.wg_routes
   }) : null
+
   cluster_inline_manifests = yamlencode({
     cluster = {
       inlineManifests = [
@@ -111,7 +108,9 @@ locals {
 resource "wireguard_asymmetric_key" "this" {
   count = var.use_wireguard ? 1 : 0
 }
-
+resource "wireguard_preshared_key" "this" {
+  count = var.use_wireguard && var.use_wireguard_preshared_key ? 1 : 0
+}
 # -- Extensions --
 data "talos_image_factory_extensions_versions" "this" {
   talos_version = var.talos_version
